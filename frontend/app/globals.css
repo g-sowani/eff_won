@@ -12,10 +12,50 @@
   --red-glow: #ff2a2a;
   --gold: #ffb800;
   --teal: #00e0d3;
-  --font-display: 'Orbitron', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  /* Neutral overlays/shadows scale with the theme's foreground color so
+     panels, borders and glass surfaces invert correctly in light mode. */
+  --overlay-1: rgba(255,255,255,.02);
+  --overlay-2: rgba(255,255,255,.03);
+  --overlay-3: rgba(255,255,255,.035);
+  --overlay-4: rgba(255,255,255,.05);
+  --overlay-5: rgba(255,255,255,.2);
+  --overlay-6: rgba(255,255,255,.3);
+  --glass-55: rgba(8,9,13,.55);
+  --glass-85: rgba(8,9,13,.85);
+  --glass-97: rgba(8,9,13,.97);
+  --recessed: rgba(0,0,0,.3);
+  --shadow-lg: rgba(0,0,0,.35);
+  --glow-blend: screen;
   --nav-h: 76px;
   --ease: cubic-bezier(.16,.84,.44,1);
+}
+
+/* --gold/--teal are darkened here since both are also used as small body
+   text (labels, medal colors) — the dark-mode values fail contrast on a
+   light surface, so light mode gets more legible variants of the same hue. */
+[data-theme='light']{
+  --bg: #f3f4f8;
+  --bg-alt: #eaecf2;
+  --surface: #ffffff;
+  --surface-2: #f4f5f9;
+  --border: rgba(12,15,28,.10);
+  --text: #14161f;
+  --text-dim: #565b6c;
+  --text-faint: #7b8193;
+  --gold: #a3720a;
+  --teal: #066b64;
+  --overlay-1: rgba(12,15,28,.03);
+  --overlay-2: rgba(12,15,28,.045);
+  --overlay-3: rgba(12,15,28,.05);
+  --overlay-4: rgba(12,15,28,.07);
+  --overlay-5: rgba(12,15,28,.22);
+  --overlay-6: rgba(12,15,28,.3);
+  --glass-55: rgba(255,255,255,.7);
+  --glass-85: rgba(255,255,255,.88);
+  --glass-97: rgba(255,255,255,.97);
+  --recessed: rgba(12,15,28,.05);
+  --shadow-lg: rgba(15,23,42,.14);
+  --glow-blend: multiply;
 }
 
 *,*::before,*::after{ box-sizing: border-box; margin: 0; padding: 0; }
@@ -98,7 +138,7 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
   margin: -260px 0 0 -260px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(225,6,0,.12), rgba(0,224,211,.06) 45%, transparent 72%);
-  mix-blend-mode: screen;
+  mix-blend-mode: var(--glow-blend);
   pointer-events: none;
   opacity: 0;
   transition: opacity .8s var(--ease);
@@ -111,7 +151,7 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   height: var(--nav-h);
   display: flex; align-items: center;
-  background: rgba(8,9,13,.55);
+  background: var(--glass-55);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   border-bottom: 1px solid transparent;
@@ -119,13 +159,14 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
 }
 .navbar.scrolled{
   height: 64px;
-  background: rgba(8,9,13,.85);
+  background: var(--glass-85);
   border-bottom-color: var(--border);
 }
 .nav-inner{
   width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px;
   display: flex; align-items: center; justify-content: space-between;
 }
+.nav-right{ display: flex; align-items: center; gap: 20px; }
 .brand{ display: flex; align-items: center; gap: 10px; }
 .brand-mark{
   width: 14px; height: 14px; border-radius: 3px;
@@ -156,6 +197,21 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
 }
 .nav-link:hover{ color: var(--text); }
 .nav-link:hover::after{ width: 100%; }
+
+.theme-toggle{
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  transition: color .25s var(--ease), border-color .25s var(--ease), background .25s var(--ease);
+}
+.theme-toggle:hover{ color: var(--text); border-color: var(--overlay-6); background: var(--overlay-1); }
+.theme-toggle svg{ width: 18px; height: 18px; }
+.theme-toggle .icon-moon{ display: none; }
+[data-theme='light'] .theme-toggle .icon-sun{ display: none; }
+[data-theme='light'] .theme-toggle .icon-moon{ display: block; }
 
 .nav-toggle{
   display: none; flex-direction: column; gap: 5px; width: 26px;
@@ -188,9 +244,9 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
 .btn-primary:hover{ transform: translateY(-3px); box-shadow: 0 14px 32px rgba(225,6,0,.5); }
 .btn-ghost{
   border: 1px solid var(--border); color: var(--text);
-  background: rgba(255,255,255,.02);
+  background: var(--overlay-1);
 }
-.btn-ghost:hover{ border-color: rgba(255,255,255,.3); transform: translateY(-3px); }
+.btn-ghost:hover{ border-color: var(--overlay-6); transform: translateY(-3px); }
 
 /* ===================== Hero ===================== */
 .hero{
@@ -204,8 +260,8 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
 .hero-grid{
   position: absolute; inset: -20% -10%;
   background-image:
-    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    linear-gradient(var(--overlay-3) 1px, transparent 1px),
+    linear-gradient(90deg, var(--overlay-3) 1px, transparent 1px);
   background-size: 56px 56px;
   transform: perspective(600px) rotateX(55deg);
   transform-origin: bottom;
@@ -353,7 +409,7 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
   display: flex; gap: 14px;
 }
 .countdown-unit{
-  background: rgba(0,0,0,.3);
+  background: var(--recessed);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 14px 8px;
@@ -379,13 +435,13 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
   position: relative; z-index: 1;
 }
 .session-chip{
-  background: rgba(255,255,255,.03);
+  background: var(--overlay-2);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 14px 16px;
   transition: border-color .3s var(--ease), transform .3s var(--ease), background .3s var(--ease);
 }
-.session-chip:hover{ border-color: rgba(225,6,0,.4); transform: translateY(-3px); background: rgba(255,255,255,.05); }
+.session-chip:hover{ border-color: rgba(225,6,0,.4); transform: translateY(-3px); background: var(--overlay-4); }
 .session-chip.is-next{ border-color: var(--red); background: rgba(225,6,0,.08); }
 .session-name{ font-size: 12px; color: var(--text-dim); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em; }
 .session-time{ font-family: var(--font-display); font-weight: 700; font-size: 15px; }
@@ -398,6 +454,7 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
   gap: 20px;
 }
 .circuit-card{
+  display: block;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -407,7 +464,7 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
 .circuit-card:hover{
   transform: translateY(-6px);
   border-color: rgba(225,6,0,.35);
-  box-shadow: 0 20px 40px rgba(0,0,0,.35);
+  box-shadow: 0 20px 40px var(--shadow-lg);
 }
 .circuit-top{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .circuit-round{
@@ -453,7 +510,7 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
   background: var(--red); color: #fff; border-color: var(--red);
   box-shadow: 0 6px 18px rgba(225,6,0,.35);
 }
-.tab-btn:not(.active):hover{ border-color: rgba(255,255,255,.3); color: var(--text); }
+.tab-btn:not(.active):hover{ border-color: var(--overlay-6); color: var(--text); }
 
 .results-race-title{
   text-align: center; color: var(--text-dim); font-size: 14px; margin-bottom: 24px;
@@ -472,7 +529,7 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
   text-align: left; padding: 16px 20px;
   font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
   color: var(--text-faint);
-  background: rgba(255,255,255,.02);
+  background: var(--overlay-1);
   border-bottom: 1px solid var(--border);
 }
 .data-table td{
@@ -481,7 +538,7 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
   border-bottom: 1px solid var(--border);
 }
 .data-table tbody tr{ transition: background .25s var(--ease); }
-.data-table tbody tr:hover{ background: rgba(255,255,255,.035); }
+.data-table tbody tr:hover{ background: var(--overlay-3); }
 .data-table tbody tr:last-child td{ border-bottom: none; }
 .pos-cell{ font-family: var(--font-display); font-weight: 700; }
 .pos-1{ color: var(--gold); }
@@ -515,7 +572,7 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
   overflow: hidden;
   transition: transform .3s var(--ease), border-color .3s var(--ease);
 }
-.standing-row:hover{ transform: translateX(4px); border-color: rgba(255,255,255,.2); }
+.standing-row:hover{ transform: translateX(4px); border-color: var(--overlay-5); }
 .standing-bar{
   position: absolute; left: 0; top: 0; bottom: 0;
   background: linear-gradient(90deg, rgba(225,6,0,.16), transparent);
@@ -559,7 +616,7 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
 .record-card:hover{
   transform: translateY(-6px);
   border-color: rgba(225,6,0,.35);
-  box-shadow: 0 20px 40px rgba(0,0,0,.35);
+  box-shadow: 0 20px 40px var(--shadow-lg);
 }
 .record-card:hover::after{ opacity: 1; }
 .record-icon{ font-size: 26px; margin-bottom: 16px; display: block; }
@@ -594,19 +651,46 @@ button{ font-family: inherit; cursor: pointer; border: none; background: none; c
 .footer-note{ color: var(--text-faint); font-size: 13px; max-width: 520px; }
 .footer-copy{ color: var(--text-faint); font-size: 12px; }
 
+/* ===================== Race Details Page ===================== */
+.race-details{ padding: 140px 0 100px; }
+.race-details-back{
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: var(--text-dim);
+  margin-bottom: 28px;
+  transition: color .25s var(--ease);
+}
+.race-details-back:hover{ color: var(--text); }
+.race-details-head{
+  background: linear-gradient(155deg, var(--surface), var(--surface-2));
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 40px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+}
+.race-details-track{ width: 200px; height: 130px; }
+.race-not-found{
+  text-align: center; color: var(--text-dim); padding: 80px 20px;
+}
+
 /* ===================== Responsive ===================== */
 @media (max-width: 860px){
   .standings-grid{ grid-template-columns: 1fr; gap: 48px; }
   .race-top{ flex-direction: column; }
   .countdown{ align-self: stretch; }
   .countdown-unit{ flex: 1; }
+  .race-details-head{ grid-template-columns: 1fr; }
+  .race-details-track{ width: 100%; height: 140px; }
 }
 
 @media (max-width: 720px){
   .nav-links{
     position: fixed; top: var(--nav-h); left: 0; right: 0;
     flex-direction: column; align-items: flex-start; gap: 0;
-    background: rgba(8,9,13,.97);
+    background: var(--glass-97);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
     max-height: 0; overflow: hidden;

@@ -1,0 +1,38 @@
+export const COUNTRY_FLAGS: Record<string, string> = {
+  Australia: "🇦🇺",
+  China: "🇨🇳",
+  Japan: "🇯🇵",
+  Bahrain: "🇧🇭",
+  "Saudi Arabia": "🇸🇦",
+  USA: "🇺🇸",
+  "United States": "🇺🇸",
+  Canada: "🇨🇦",
+  Monaco: "🇲🇨",
+  Spain: "🇪🇸",
+  Austria: "🇦🇹",
+  UK: "🇬🇧",
+  "United Kingdom": "🇬🇧",
+  "Great Britain": "🇬🇧",
+  Belgium: "🇧🇪",
+  Hungary: "🇭🇺",
+  Netherlands: "🇳🇱",
+  Italy: "🇮🇹",
+  Azerbaijan: "🇦🇿",
+  Singapore: "🇸🇬",
+  Mexico: "🇲🇽",
+  Brazil: "🇧🇷",
+  Qatar: "🇶🇦",
+  UAE: "🇦🇪",
+  "United Arab Emirates": "🇦🇪",
+  Portugal: "🇵🇹",
+  France: "🇫🇷",
+  Germany: "🇩🇪",
+  Russia: "🇷🇺",
+  Turkey: "🇹🇷",
+  "South Korea": "🇰🇷",
+  India: "🇮🇳",
+};
+
+export function flagFor(country: string): string {
+  return COUNTRY_FLAGS[country] || "🏁";
+}
