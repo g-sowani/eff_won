@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Reveal from "@/components/ui/Reveal";
 import CircuitCard from "@/components/home/CircuitCard";
-import { getJSON } from "@/lib/api";
-import { Race, RaceTableResponse } from "@/lib/types";
+import { getSeasonCalendar } from "@/lib/raceWeekend";
+import { Race } from "@/lib/types";
 
 type State =
   | { status: "loading" }
@@ -18,8 +18,9 @@ export default function CalendarSection() {
     let cancelled = false;
     (async () => {
       try {
-        const data = await getJSON<RaceTableResponse>("current.json");
-        if (!cancelled) setState({ status: "ready", races: data.MRData.RaceTable.Races });
+        // Fetched once per visit (shared with the refresh scheduler) — the calendar rarely changes.
+        const races = await getSeasonCalendar();
+        if (!cancelled) setState({ status: "ready", races });
       } catch {
         if (!cancelled) setState({ status: "error" });
       }

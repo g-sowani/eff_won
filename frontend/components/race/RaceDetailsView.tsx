@@ -7,6 +7,8 @@ import RaceHeader from "@/components/race/RaceHeader";
 import SessionSchedule from "@/components/race/SessionSchedule";
 import RaceResultsPanel from "@/components/race/RaceResultsPanel";
 import { getJSON } from "@/lib/api";
+import { useLiveRefreshTick } from "@/hooks/useRefreshTick";
+import { isRaceSettled } from "@/lib/raceWeekend";
 import { QualifyingResult, Race, RaceResult, RaceTableResponse } from "@/lib/types";
 
 type HeadState =
@@ -24,6 +26,10 @@ export default function RaceDetailsView({ season, round }: { season: string; rou
   const [qualiStatus, setQualiStatus] = useState<ResultsStatus>("loading");
   const [qualiResults, setQualiResults] = useState<QualifyingResult[]>();
 
+  // Past races' results are final, so stop refreshing once a race is settled.
+  const [settled, setSettled] = useState(false);
+  const refreshTick = useLiveRefreshTick(!settled);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -33,8 +39,9 @@ export default function RaceDetailsView({ season, round }: { season: string; rou
         const race = data.MRData.RaceTable.Races[0];
         if (cancelled) return;
         setHead(race ? { status: "ready", race } : { status: "notfound" });
+        setSettled(!race || isRaceSettled(race));
       } catch {
-        if (!cancelled) setHead({ status: "error" });
+        if (!cancelled) setHead((prev) => (prev.status === "ready" ? prev : { status: "error" }));
       }
 
       try {
@@ -44,7 +51,7 @@ export default function RaceDetailsView({ season, round }: { season: string; rou
         setRaceResults(race?.Results);
         setRaceStatus("ready");
       } catch {
-        if (!cancelled) setRaceStatus("error");
+        if (!cancelled) setRaceStatus((s) => (s === "ready" ? s : "error"));
       }
 
       try {
@@ -54,14 +61,14 @@ export default function RaceDetailsView({ season, round }: { season: string; rou
         setQualiResults(race?.QualifyingResults);
         setQualiStatus("ready");
       } catch {
-        if (!cancelled) setQualiStatus("error");
+        if (!cancelled) setQualiStatus((s) => (s === "ready" ? s : "error"));
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [season, round]);
+  }, [season, round, refreshTick]);
 
   return (
     <section className="section race-details">

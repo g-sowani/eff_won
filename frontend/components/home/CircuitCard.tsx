@@ -29,7 +29,6 @@ export default function CircuitCard({ race }: { race: Race }) {
         {flagFor(circuit.Location.country)} {circuit.Location.locality}
       </div>
       <div className="circuit-country">{circuit.Location.country}</div>
-      <div className="circuit-name">{circuit.circuitName}</div>
     </Link>
   );
 }

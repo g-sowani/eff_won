@@ -1,4 +1,4 @@
-# APEXF1 Backend
+# F1 For You Backend
 
 FastAPI service. Currently a scaffold (health check only) — the foundation for future ML models and backend functionality. Not yet consumed by `frontend/`, which fetches F1 data directly from the Jolpica-F1 API.
 

@@ -1,4 +1,4 @@
-# APEXF1
+# F1 For You
 
 A Formula 1 hub: live next-race countdown, season calendar with per-race detail pages, latest race/qualifying results, driver & constructor standings, and an all-time-records archive.
 

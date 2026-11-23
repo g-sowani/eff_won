@@ -1,4 +1,4 @@
-# APEXF1 Frontend
+# F1 For You Frontend
 
 Next.js (App Router, TypeScript) site. Fetches F1 data client-side directly from the [Jolpica-F1 API](https://api.jolpi.ca/ergast/f1) — see the root `CLAUDE.md` for the full architecture.
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Reveal from "@/components/ui/Reveal";
 import NextRaceCard from "@/components/home/NextRaceCard";
 import { getJSON } from "@/lib/api";
+import { useLiveRefreshTick } from "@/hooks/useRefreshTick";
 import { Race, RaceTableResponse } from "@/lib/types";
 
 type State =
@@ -14,6 +15,8 @@ type State =
 export default function NextRaceSection() {
   const [state, setState] = useState<State>({ status: "loading" });
 
+  const refreshTick = useLiveRefreshTick();
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -23,13 +26,13 @@ export default function NextRaceSection() {
         if (!race) throw new Error("No upcoming race");
         if (!cancelled) setState({ status: "ready", race });
       } catch {
-        if (!cancelled) setState({ status: "error" });
+        if (!cancelled) setState((prev) => (prev.status === "ready" ? prev : { status: "error" }));
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [refreshTick]);
 
   return (
     <section className="section" id="next-race">

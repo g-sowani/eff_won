@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Reveal from "@/components/ui/Reveal";
 import StandingRow from "@/components/home/StandingRow";
 import { getJSON } from "@/lib/api";
+import { useLiveRefreshTick } from "@/hooks/useRefreshTick";
 import { ConstructorStanding, DriverStanding, StandingsTableResponse } from "@/lib/types";
 import { teamColor } from "@/lib/constants/teamColors";
 
@@ -14,6 +15,8 @@ export default function StandingsSection() {
   const [driverRows, setDriverRows] = useState<DriverStanding[]>([]);
   const [constructorStatus, setConstructorStatus] = useState<Status>("loading");
   const [constructorRows, setConstructorRows] = useState<ConstructorStanding[]>([]);
+
+  const refreshTick = useLiveRefreshTick();
 
   useEffect(() => {
     let cancelled = false;
@@ -26,7 +29,7 @@ export default function StandingsSection() {
         setDriverRows(list?.DriverStandings || []);
         setDriverStatus("ready");
       } catch {
-        if (!cancelled) setDriverStatus("error");
+        if (!cancelled) setDriverStatus((s) => (s === "ready" ? s : "error"));
       }
 
       try {
@@ -36,14 +39,14 @@ export default function StandingsSection() {
         setConstructorRows(list?.ConstructorStandings || []);
         setConstructorStatus("ready");
       } catch {
-        if (!cancelled) setConstructorStatus("error");
+        if (!cancelled) setConstructorStatus((s) => (s === "ready" ? s : "error"));
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [refreshTick]);
 
   const maxDriverPts = Math.max(...driverRows.map((r) => Number(r.points)), 1);
   const maxConstructorPts = Math.max(...constructorRows.map((r) => Number(r.points)), 1);

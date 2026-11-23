@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Orbitron, Inter } from "next/font/google";
 import "./globals.css";
 import Loader from "@/components/layout/Loader";
-import SpeedLines from "@/components/layout/SpeedLines";
-import CursorGlow from "@/components/layout/CursorGlow";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
@@ -20,7 +18,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "APEX | Formula 1 Hub",
+  title: "F1 For You | Formula 1 Hub",
   description: "Live F1 race results, qualifying, standings and all-time records.",
 };
 
@@ -45,8 +43,6 @@ export default function RootLayout({
       </head>
       <body>
         <Loader />
-        <SpeedLines />
-        <CursorGlow />
         <Navbar />
         <main id="top">{children}</main>
         <Footer />

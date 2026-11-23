@@ -6,6 +6,7 @@ import ResultsTabs, { ResultsTab } from "@/components/ui/ResultsTabs";
 import RaceResultsTable from "@/components/ui/RaceResultsTable";
 import QualifyingResultsTable from "@/components/ui/QualifyingResultsTable";
 import { getJSON } from "@/lib/api";
+import { useLiveRefreshTick } from "@/hooks/useRefreshTick";
 import { QualifyingResult, RaceResult, RaceTableResponse } from "@/lib/types";
 
 type Status = "loading" | "error" | "ready";
@@ -17,6 +18,8 @@ export default function ResultsSection() {
   const [raceResults, setRaceResults] = useState<RaceResult[]>();
   const [qualiStatus, setQualiStatus] = useState<Status>("loading");
   const [qualiResults, setQualiResults] = useState<QualifyingResult[]>();
+
+  const refreshTick = useLiveRefreshTick();
 
   useEffect(() => {
     let cancelled = false;
@@ -38,7 +41,7 @@ export default function ResultsSection() {
         setRaceResults(race?.Results);
         setRaceStatus("ready");
       } catch {
-        if (!cancelled) setRaceStatus("error");
+        if (!cancelled) setRaceStatus((s) => (s === "ready" ? s : "error"));
       }
 
       try {
@@ -48,14 +51,14 @@ export default function ResultsSection() {
         setQualiResults(race?.QualifyingResults);
         setQualiStatus("ready");
       } catch {
-        if (!cancelled) setQualiStatus("error");
+        if (!cancelled) setQualiStatus((s) => (s === "ready" ? s : "error"));
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [refreshTick]);
 
   return (
     <section className="section section-alt" id="results">
